@@ -43,10 +43,10 @@ namespace ConsoleApp1
                 Console.WriteLine("Fullscreen button not found!");
             }
 
-            // The chat comes back after entering fullscreen, so close it again
+            // O chat volta depois de entrar na tela inteira, então fecha de novo
             CloseChat(driver, wait);
 
-            //keep program running 
+            // Mantém o programa rodando
             var shutdown = new ManualResetEventSlim(false);
             Console.CancelKeyPress += (_, e) =>
             {
@@ -61,12 +61,12 @@ namespace ConsoleApp1
                 {
                     if (driver.WindowHandles.Count == 0) break;
 
-                    // When the live ends YouTube goes to the next one and the chat opens again
+                    // Quando a live acaba o YouTube vai para a próxima e o chat abre de novo
                     CloseChatIfOpen(driver);
                 }
                 catch (WebDriverException)
                 {
-                    // Browser was closed manually
+                    // O navegador foi fechado manualmente
                     break;
                 }
             }
@@ -87,7 +87,7 @@ namespace ConsoleApp1
             Console.WriteLine("Looking for the button close chat");
             try
             {
-                // The live chat is inside an iframe, so switch into it first
+                // O chat da live fica dentro de um iframe, então entra nele primeiro
                 driver.SwitchTo().Frame(wait.Until(d => d.FindElement(By.Id("chatframe"))));
 
                 IWebElement closeButton = wait.Until(d =>
@@ -100,11 +100,11 @@ namespace ConsoleApp1
                 Console.WriteLine("Close chat button not found!");
             }
 
-            // Leave the chat iframe, the player is on the video page
+            // Sai do iframe do chat, o player fica na página do vídeo
             driver.SwitchTo().DefaultContent();
         }
 
-        // Quick check without waiting, used by the monitoring loop
+        // Checagem rápida, sem esperar, usada pelo laço de monitoramento
         private static void CloseChatIfOpen(IWebDriver driver)
         {
             try
@@ -122,7 +122,7 @@ namespace ConsoleApp1
             }
             catch (WebDriverException)
             {
-                // The page changed during the check (e.g. next live loading), try again on the next loop
+                // A página mudou durante a checagem (ex.: próxima live carregando), tenta de novo na próxima volta
             }
             finally
             {

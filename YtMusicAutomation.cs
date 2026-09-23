@@ -9,11 +9,11 @@ namespace ConsoleApp1
         public static void Run(){
             Console.WriteLine("Starting application...");
 
-// Google Chrome binary installed via Flatpak (instead of Chromium/Chrome for Testing)
+// Executável do Google Chrome instalado via Flatpak (em vez do Chromium/Chrome for Testing)
             const string chromeBinary = "/var/lib/flatpak/app/com.google.Chrome/current/active/files/extra/chrome";
 
-// Dedicated automation profile. Chrome (136+) blocks automation on the default profile,
-// so we use a separate one: log in to it once and the session stays saved.
+// Perfil dedicado para automação. O Chrome (136+) bloqueia automação no perfil padrão,
+// então usamos um separado: faça login nele uma vez e a sessão fica salva.
             string profileDir = Path.Combine(
                 Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".config", "selenium-chrome-profile");
 
@@ -48,7 +48,7 @@ namespace ConsoleApp1
                 Console.WriteLine("Play button not found, continuing without clicking.");
             }
 
-// Keeps the program running with no time limit, until Ctrl+C or until the Chrome window is closed.
+// Mantém o programa rodando sem limite de tempo, até Ctrl+C ou até a janela do Chrome ser fechada.
             var shutdown = new ManualResetEventSlim(false);
             Console.CancelKeyPress += (_, e) =>
             {
@@ -65,7 +65,7 @@ namespace ConsoleApp1
                 }
                 catch (WebDriverException)
                 {
-                    // Browser was closed manually
+                    // O navegador foi fechado manualmente
                     break;
                 }
             }
