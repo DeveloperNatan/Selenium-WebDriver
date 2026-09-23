@@ -12,7 +12,7 @@ switch (option)
         YtMusicAutomation.Run();
         break;
     case "2":
-        YtSkipAd.Run();
+        YtCloseChat.Run();
         break;
     case "0":
         Console.WriteLine("Bye.");
