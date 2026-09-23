@@ -6,6 +6,9 @@ namespace ConsoleApp1
 {
     public static class YtCloseChat
     {
+        private const string CloseChatXPath =
+            "/html/body/yt-live-chat-app/div/yt-live-chat-renderer/tp-yt-iron-pages/div/yt-live-chat-header-renderer/div[4]/yt-button-renderer/yt-button-shape/button";
+
         public static void Run()
         {
             Console.WriteLine("Starting application...");
@@ -57,6 +60,9 @@ namespace ConsoleApp1
                 try
                 {
                     if (driver.WindowHandles.Count == 0) break;
+
+                    // When the live ends YouTube goes to the next one and the chat opens again
+                    CloseChatIfOpen(driver);
                 }
                 catch (WebDriverException)
                 {
@@ -85,7 +91,7 @@ namespace ConsoleApp1
                 driver.SwitchTo().Frame(wait.Until(d => d.FindElement(By.Id("chatframe"))));
 
                 IWebElement closeButton = wait.Until(d =>
-                    d.FindElement(By.XPath("/html/body/yt-live-chat-app/div/yt-live-chat-renderer/tp-yt-iron-pages/div/yt-live-chat-header-renderer/div[4]/yt-button-renderer/yt-button-shape/button")));
+                    d.FindElement(By.XPath(CloseChatXPath)));
                 closeButton.Click();
                 Console.WriteLine("Close button clicked");
             }
@@ -96,6 +102,32 @@ namespace ConsoleApp1
 
             // Leave the chat iframe, the player is on the video page
             driver.SwitchTo().DefaultContent();
+        }
+
+        // Quick check without waiting, used by the monitoring loop
+        private static void CloseChatIfOpen(IWebDriver driver)
+        {
+            try
+            {
+                var chatFrame = driver.FindElements(By.Id("chatframe"));
+                if (chatFrame.Count == 0) return;
+
+                driver.SwitchTo().Frame(chatFrame[0]);
+                var closeButton = driver.FindElements(By.XPath(CloseChatXPath));
+                if (closeButton.Count > 0 && closeButton[0].Displayed)
+                {
+                    closeButton[0].Click();
+                    Console.WriteLine("Chat opened again, closed it.");
+                }
+            }
+            catch (WebDriverException)
+            {
+                // The page changed during the check (e.g. next live loading), try again on the next loop
+            }
+            finally
+            {
+                try { driver.SwitchTo().DefaultContent(); } catch (WebDriverException) { }
+            }
         }
     }
 }
